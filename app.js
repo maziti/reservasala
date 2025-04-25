@@ -1,69 +1,48 @@
 
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.11/firebase-app.js";
+import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/9.6.11/firebase-database.js";
+
 const firebaseConfig = {
-    apiKey: "AIzaSyCvFbiSbZehmHfE9ynoxjKhJ1Oj9I6vCIM",
-    authDomain: "reserva-salas-76930.firebaseapp.com",
-    databaseURL: "https://reserva-salas-76930-default-rtdb.firebaseio.com",
-    projectId: "reserva-salas-76930",
-    storageBucket: "reserva-salas-76930.firebasestorage.app",
-    messagingSenderId: "368015832793",
-    appId: "1:368015832793:web:1ca2ca6ee9649b96e1f0c8",
-    measurementId: "G-6HQS9G0RNC"
+  apiKey: "AIzaSyCvFbiSbZehmHfE9ynoxjKhJ1Oj9I6vCIM",
+  authDomain: "reserva-salas-76930.firebaseapp.com",
+  databaseURL: "https://reserva-salas-76930-default-rtdb.firebaseio.com",
+  projectId: "reserva-salas-76930",
+  storageBucket: "reserva-salas-76930.appspot.com",
+  messagingSenderId: "368015832793",
+  appId: "1:368015832793:web:1ca2ca6ee9649b96e1f0c8"
 };
 
-// Inicializando Firebase
-firebase.initializeApp(firebaseConfig);
-const database = firebase.database();
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
 
-// Função para adicionar reserva
-document.getElementById("reservar").addEventListener("click", () => {
-    const nome = document.getElementById("nome").value;
-    const data = document.getElementById("data").value;
-    const horarioInicio = document.getElementById("horario_inicio").value;
-    const horarioFim = document.getElementById("horario_fim").value;
-    const sala = document.getElementById("sala").value;
+document.getElementById("reservar").addEventListener("click", async () => {
+  const nome = document.getElementById("nome").value;
+  const data = document.getElementById("data").value;
+  const horarioInicio = document.getElementById("horario_inicio").value;
+  const horarioFim = document.getElementById("horario_fim").value;
+  const sala = document.getElementById("sala").value;
 
-    if (!nome || !data || !horarioInicio || !horarioFim || !sala) {
-        alert("Por favor, preencha todos os campos!");
-        return;
-    }
+  if (!nome || !data || !horarioInicio || !horarioFim || !sala) {
+    alert("Preencha todos os campos!");
+    return;
+  }
 
-    // Criar um ID único para a reserva
-    const reservaId = `${data}-${horarioInicio}-${sala}`;
+  const id = `${data}-${horarioInicio}-${sala}`;
+  const reservaRef = ref(db, "reservas/" + id);
 
-    const reservaData = {
-        nome: nome,
-        data: data,
-        horarioInicio: horarioInicio,
-        horarioFim: horarioFim,
-        sala: sala
-    };
+  const novaReserva = {
+    nome,
+    data,
+    horarioInicio,
+    horarioFim,
+    sala
+  };
 
-    // Salvando a reserva no banco de dados
-    database.ref('reservas/' + reservaId).set(reservaData)
-        .then(() => {
-            alert("Reserva realizada com sucesso!");
-            loadHistorico();
-        })
-        .catch(error => {
-            alert("Erro ao realizar reserva: " + error.message);
-        });
+  try {
+    await set(reservaRef, novaReserva);
+    alert("Reserva feita com sucesso!");
+    location.reload();
+  } catch (error) {
+    alert("Erro ao salvar reserva: " + error.message);
+  }
 });
-
-// Função para carregar o histórico de reservas
-function loadHistorico() {
-    const reservaList = document.getElementById("lista-reservas");
-    reservaList.innerHTML = "";
-    
-    database.ref('reservas').once('value', (snapshot) => {
-        const reservas = snapshot.val();
-        for (const key in reservas) {
-            const reserva = reservas[key];
-            const li = document.createElement("li");
-            li.textContent = `${reserva.nome} - ${reserva.data} ${reserva.horarioInicio} às ${reserva.horarioFim} - ${reserva.sala}`;
-            reservaList.appendChild(li);
-        }
-    });
-}
-
-// Carregar histórico ao abrir a página
-window.onload = loadHistorico;
