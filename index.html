@@ -1,0 +1,46 @@
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reserva de Salas</title>
+    <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-database.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="app.js" defer></script>
+</head>
+<body class="bg-gray-100 p-8">
+
+<div class="container mx-auto bg-white p-6 rounded-lg shadow-lg">
+    <h1 class="text-2xl font-bold mb-4">Sistema de Reserva de Salas</h1>
+
+    <div id="form-reserva" class="mb-6">
+        <label for="nome" class="block text-sm font-medium text-gray-700">Nome:</label>
+        <input type="text" id="nome" class="w-full p-2 border border-gray-300 rounded-lg mb-4" placeholder="Seu nome">
+        
+        <label for="data" class="block text-sm font-medium text-gray-700">Data:</label>
+        <input type="date" id="data" class="w-full p-2 border border-gray-300 rounded-lg mb-4">
+        
+        <label for="horario" class="block text-sm font-medium text-gray-700">Horário:</label>
+        <input type="time" id="horario" class="w-full p-2 border border-gray-300 rounded-lg mb-4">
+        
+        <label for="sala" class="block text-sm font-medium text-gray-700">Sala:</label>
+        <select id="sala" class="w-full p-2 border border-gray-300 rounded-lg mb-4">
+            <option value="Sala Direção">Sala Direção</option>
+            <option value="Sala PV Azul">Sala PV Azul</option>
+        </select>
+        
+        <button id="reservar" class="w-full p-2 bg-blue-500 text-white rounded-lg">Reservar</button>
+    </div>
+
+    <div id="historico" class="mt-6">
+        <h2 class="text-xl font-semibold mb-4">Histórico de Reservas</h2>
+        <ul id="lista-reservas" class="list-disc pl-5">
+            <!-- Reservas serão listadas aqui -->
+        </ul>
+    </div>
+</div>
+
+</body>
+</html>
