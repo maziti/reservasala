@@ -18,21 +18,23 @@ const database = firebase.database();
 document.getElementById("reservar").addEventListener("click", () => {
     const nome = document.getElementById("nome").value;
     const data = document.getElementById("data").value;
-    const horario = document.getElementById("horario").value;
+    const horarioInicio = document.getElementById("horario_inicio").value;
+    const horarioFim = document.getElementById("horario_fim").value;
     const sala = document.getElementById("sala").value;
 
-    if (!nome || !data || !horario || !sala) {
+    if (!nome || !data || !horarioInicio || !horarioFim || !sala) {
         alert("Por favor, preencha todos os campos!");
         return;
     }
 
     // Criar um ID único para a reserva
-    const reservaId = `${data}-${horario}-${sala}`;
+    const reservaId = `${data}-${horarioInicio}-${sala}`;
 
     const reservaData = {
         nome: nome,
         data: data,
-        horario: horario,
+        horarioInicio: horarioInicio,
+        horarioFim: horarioFim,
         sala: sala
     };
 
@@ -57,7 +59,7 @@ function loadHistorico() {
         for (const key in reservas) {
             const reserva = reservas[key];
             const li = document.createElement("li");
-            li.textContent = `${reserva.nome} - ${reserva.data} ${reserva.horario} - ${reserva.sala}`;
+            li.textContent = `${reserva.nome} - ${reserva.data} ${reserva.horarioInicio} às ${reserva.horarioFim} - ${reserva.sala}`;
             reservaList.appendChild(li);
         }
     });
