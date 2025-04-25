@@ -1,34 +1,40 @@
-
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Reserva de Salas</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-  <h1>Reserva de Salas</h1>
+<body class="bg-gray-100 p-6">
+  <div class="max-w-2xl mx-auto bg-white p-6 rounded shadow">
+    <h1 class="text-2xl font-bold mb-4">Reserva de Salas</h1>
 
-  <div>
-    <input type="text" id="nome" placeholder="Seu nome"><br>
-    <input type="date" id="data"><br>
-    <input type="time" id="horario_inicio"><br>
-    <input type="time" id="horario_fim"><br>
-    <select id="sala">
-      <option value="Sala Direção">Sala Direção</option>
-      <option value="Sala PV Azul">Sala PV Azul</option>
-    </select><br><br>
-    <button id="reservar">Reservar</button>
+    <form id="reservaForm" class="space-y-4">
+      <input class="w-full p-2 border rounded" type="text" id="nome" placeholder="Seu nome" required />
+      <input class="w-full p-2 border rounded" type="date" id="data" required />
+      <input class="w-full p-2 border rounded" type="time" id="inicio" required />
+      <input class="w-full p-2 border rounded" type="time" id="fim" required />
+      <select class="w-full p-2 border rounded" id="sala" required>
+        <option value="">Selecione a sala</option>
+        <option value="Sala Direção">Sala Direção</option>
+        <option value="Sala PV Azul">Sala PV Azul</option>
+      </select>
+      <button class="bg-blue-500 text-white px-4 py-2 rounded" type="submit">Reservar</button>
+    </form>
+
+    <h2 class="text-xl font-bold mt-6">Histórico (últimos 15 dias)</h2>
+    <div id="historico" class="mt-4 space-y-2"></div>
   </div>
 
-  <h2>Histórico (últimos 15 dias)</h2>
-  <div id="historico"></div>
-
-  <!-- Modal simples de login -->
-  <div id="loginModal" style="display:none;">
-    <input type="email" id="loginEmail" placeholder="Email"><br>
-    <input type="password" id="loginSenha" placeholder="Senha"><br>
-    <button onclick="confirmarLogin()">Entrar</button>
+  <!-- Modal de autenticação -->
+  <div id="authModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center">
+    <div class="bg-white p-4 rounded shadow space-y-2">
+      <p class="font-bold">Autenticação necessária</p>
+      <input class="w-full p-2 border rounded" type="email" id="email" placeholder="Email" />
+      <input class="w-full p-2 border rounded" type="password" id="senha" placeholder="Senha" />
+      <button id="authConfirm" class="bg-blue-500 text-white px-4 py-2 rounded">Confirmar</button>
+      <button onclick="toggleModal(false)" class="text-sm text-red-500">Cancelar</button>
+    </div>
   </div>
 
   <script type="module" src="app.js"></script>
