@@ -2,43 +2,35 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reserva de Salas</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Reserva de Salas</title>
 </head>
-<body class="bg-gray-100 p-8">
-<div class="container mx-auto bg-white p-6 rounded-lg shadow-lg">
-    <h1 class="text-2xl font-bold mb-4">Sistema de Reserva de Salas</h1>
+<body>
+  <h1>Reserva de Salas</h1>
 
-    <div id="form-reserva" class="mb-6">
-        <label for="nome" class="block text-sm font-medium text-gray-700">Nome:</label>
-        <input type="text" id="nome" class="w-full p-2 border border-gray-300 rounded-lg mb-4" placeholder="Seu nome">
-        
-        <label for="data" class="block text-sm font-medium text-gray-700">Data:</label>
-        <input type="date" id="data" class="w-full p-2 border border-gray-300 rounded-lg mb-4">
-        
-        <label for="horario_inicio" class="block text-sm font-medium text-gray-700">Horário Início:</label>
-        <input type="time" id="horario_inicio" class="w-full p-2 border border-gray-300 rounded-lg mb-4">
-        
-        <label for="horario_fim" class="block text-sm font-medium text-gray-700">Horário Fim:</label>
-        <input type="time" id="horario_fim" class="w-full p-2 border border-gray-300 rounded-lg mb-4">
-        
-        <label for="sala" class="block text-sm font-medium text-gray-700">Sala:</label>
-        <select id="sala" class="w-full p-2 border border-gray-300 rounded-lg mb-4">
-            <option value="Sala Direção">Sala Direção</option>
-            <option value="Sala PV Azul">Sala PV Azul</option>
-        </select>
-        
-        <button id="reservar" class="w-full p-2 bg-blue-500 text-white rounded-lg">Reservar</button>
-    </div>
+  <div>
+    <input type="text" id="nome" placeholder="Seu nome"><br>
+    <input type="date" id="data"><br>
+    <input type="time" id="horario_inicio"><br>
+    <input type="time" id="horario_fim"><br>
+    <select id="sala">
+      <option value="Sala Direção">Sala Direção</option>
+      <option value="Sala PV Azul">Sala PV Azul</option>
+    </select><br><br>
+    <button id="reservar">Reservar</button>
+  </div>
 
-    <div id="historico" class="mt-6">
-        <h2 class="text-xl font-semibold mb-4">Histórico de Reservas</h2>
-        <ul id="lista-reservas" class="list-disc pl-5"></ul>
-    </div>
-</div>
+  <h2>Histórico (últimos 15 dias)</h2>
+  <div id="historico"></div>
 
-<script type="module" src="app.js"></script>
+  <!-- Modal simples de login -->
+  <div id="loginModal" style="display:none;">
+    <input type="email" id="loginEmail" placeholder="Email"><br>
+    <input type="password" id="loginSenha" placeholder="Senha"><br>
+    <button onclick="confirmarLogin()">Entrar</button>
+  </div>
+
+  <script type="module" src="app.js"></script>
 </body>
 </html>
