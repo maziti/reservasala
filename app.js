@@ -1,5 +1,6 @@
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.11/firebase-app.js";
-import { getDatabase, ref, set, get, remove, child } from "https://www.gstatic.com/firebasejs/9.6.11/firebase-database.js";
+import { getDatabase, ref, set, get, remove } from "https://www.gstatic.com/firebasejs/9.6.11/firebase-database.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCvFbiSbZehmHfE9ynoxjKhJ1Oj9I6vCIM",
@@ -60,37 +61,66 @@ function renderHistorico() {
   get(ref(db, "reservas")).then(snapshot => {
     const reservas = snapshot.val() || {};
     const hoje = new Date();
-    const dataLimite = new Date();
-    dataLimite.setDate(hoje.getDate() - 15);
+    const fim = new Date();
+    fim.setDate(hoje.getDate() + 30);
 
-    const reservasFiltradas = Object.values(reservas)
-      .filter(r => new Date(r.data) >= dataLimite)
-      .sort((a, b) => a.data.localeCompare(b.data) || a.inicio.localeCompare(b.inicio));
+    const reservasPorDia = {};
 
-    for (const r of reservasFiltradas) {
-      const div = document.createElement("div");
-      div.className = "border p-2 rounded bg-gray-50 flex justify-between items-center";
-      div.innerHTML = `
-        <div>
-          <p><strong>${r.nome}</strong> - ${r.sala}</p>
-          <p>${r.data} | ${r.inicio} - ${r.fim}</p>
-        </div>
-        <div class="space-x-2">
-          <button onclick="auth('edit', ${r.id})" class="text-blue-500">Editar</button>
-          <button onclick="auth('delete', ${r.id})" class="text-red-500">Excluir</button>
-        </div>
-      `;
-      historicoDiv.appendChild(div);
+    Object.values(reservas).forEach(r => {
+      const dataReserva = new Date(r.data);
+      if (dataReserva >= hoje && dataReserva <= fim) {
+        if (!reservasPorDia[r.data]) {
+          reservasPorDia[r.data] = [];
+        }
+        reservasPorDia[r.data].push(r);
+      }
+    });
+
+    const datasOrdenadas = Object.keys(reservasPorDia).sort();
+
+    datasOrdenadas.forEach(data => {
+      const card = document.createElement("div");
+      card.className = "bg-white rounded-lg shadow p-4";
+
+      const titulo = document.createElement("h3");
+      titulo.className = "text-lg font-semibold mb-2";
+      titulo.textContent = new Date(data).toLocaleDateString("pt-BR", {
+        weekday: "long", year: "numeric", month: "long", day: "numeric"
+      });
+      card.appendChild(titulo);
+
+      reservasPorDia[data].sort((a, b) => a.inicio.localeCompare(b.inicio)).forEach(r => {
+        const item = document.createElement("div");
+        item.className = "flex justify-between items-center border-t py-2";
+
+        item.innerHTML = `
+          <div>
+            <p class="font-medium">${r.sala}</p>
+            <p>${r.inicio} às ${r.fim} - <strong>${r.nome}</strong></p>
+          </div>
+          <div>
+            <button onclick="auth('edit', ${r.id})" class="text-blue-600 hover:underline mr-2">Editar</button>
+            <button onclick="auth('delete', ${r.id})" class="text-red-600 hover:underline">Excluir</button>
+          </div>
+        `;
+        card.appendChild(item);
+      });
+
+      historicoDiv.appendChild(card);
+    });
+
+    if (datasOrdenadas.length === 0) {
+      historicoDiv.innerHTML = "<p class='text-gray-500'>Nenhuma reserva nos próximos 30 dias.</p>";
     }
   });
 }
 
-window.auth = function (action, id) {
+window.auth = function(action, id) {
   reservaEditando = { action, id };
   toggleModal(true);
 };
 
-window.toggleModal = function (show) {
+window.toggleModal = function(show) {
   document.getElementById("authModal").style.display = show ? "flex" : "none";
 };
 
@@ -102,7 +132,6 @@ document.getElementById("authConfirm").addEventListener("click", async () => {
     toggleModal(false);
     const reservas = (await get(ref(db, "reservas"))).val() || {};
     const reserva = reservas[reservaEditando.id];
-
     if (!reserva) return;
 
     if (reservaEditando.action === "delete") {

@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -6,7 +7,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 p-6">
-  <div class="max-w-2xl mx-auto bg-white p-6 rounded shadow">
+  <div class="max-w-3xl mx-auto bg-white p-6 rounded shadow">
     <h1 class="text-2xl font-bold mb-4">Reserva de Salas</h1>
 
     <form id="reservaForm" class="space-y-4">
@@ -22,11 +23,10 @@
       <button class="bg-blue-500 text-white px-4 py-2 rounded" type="submit">Reservar</button>
     </form>
 
-    <h2 class="text-xl font-bold mt-6">Histórico (últimos 15 dias)</h2>
-    <div id="historico" class="mt-4 space-y-2"></div>
+    <h2 class="text-xl font-bold mt-6">Reservas (próximos 30 dias)</h2>
+    <div id="historico" class="mt-4 space-y-4"></div>
   </div>
 
-  <!-- Modal de autenticação -->
   <div id="authModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center">
     <div class="bg-white p-4 rounded shadow space-y-2">
       <p class="font-bold">Autenticação necessária</p>
