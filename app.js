@@ -1,6 +1,6 @@
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.11/firebase-app.js";
-import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/9.6.11/firebase-database.js";
+import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/9.6.11/firebase-database.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCvFbiSbZehmHfE9ynoxjKhJ1Oj9I6vCIM",
@@ -15,15 +15,39 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-get(ref(db, "reservas")).then(snapshot => {
-  const reservas = snapshot.val() || {};
-  Object.values(reservas).forEach(r => {
-    const div = document.getElementById("agenda-" + r.data);
-    if (div) {
-      const item = document.createElement("div");
-      item.className = "bg-blue-100 p-1 rounded";
-      item.textContent = `${r.inicio}–${r.fim} | ${r.sala} | ${r.nome}`;
-      div.appendChild(item);
-    }
+function carregarReservas() {
+  get(ref(db, "reservas")).then(snapshot => {
+    const reservas = snapshot.val() || {};
+    Object.values(reservas).forEach(r => {
+      const div = document.getElementById("agenda-" + r.data);
+      if (div) {
+        const item = document.createElement("div");
+        item.className = "bg-blue-100 p-1 rounded";
+        item.textContent = `${r.inicio}–${r.fim} | ${r.sala} | ${r.nome}`;
+        div.appendChild(item);
+      }
+    });
   });
+}
+
+document.getElementById("reservaForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const nome = document.getElementById("nome").value;
+  const data = document.getElementById("data").value;
+  const inicio = document.getElementById("inicio").value;
+  const fim = document.getElementById("fim").value;
+  const sala = document.getElementById("sala").value;
+
+  if (fim <= inicio) {
+    alert("Horário final deve ser maior que o inicial.");
+    return;
+  }
+
+  const id = `${data}-${inicio}-${sala}`;
+  const novaReserva = { nome, data, inicio, fim, sala };
+  await set(ref(db, "reservas/" + id), novaReserva);
+  alert("Reserva adicionada!");
+  location.reload();
 });
+
+carregarReservas();
