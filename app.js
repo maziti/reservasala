@@ -17,6 +17,11 @@ const db = getDatabase(app);
 let autenticado = false;
 let reservaEditando = null;
 
+// 🔐 Verifica se está logado no localStorage
+if (localStorage.getItem("admin") === "true") {
+  autenticado = true;
+}
+
 const meses = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
 const diasSemana = ["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"];
 
@@ -127,7 +132,7 @@ document.getElementById("authConfirm").addEventListener("click", () => {
   const email = document.getElementById("email").value;
   const senha = document.getElementById("senha").value;
   if (email === "ti@mazi.com.br" && senha === "@Mazi#2017@") {
-    autenticado = true;
+    localStorage.setItem("admin", "true");
     toggleModal(false);
     location.reload();
   } else {
