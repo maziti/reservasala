@@ -7,9 +7,15 @@
 </head>
 <body class="bg-gray-100 p-6">
   <div class="max-w-7xl mx-auto space-y-6">
-    <div class="bg-white p-6 rounded shadow">
+    <div class="bg-white p-6 rounded shadow relative">
       <h1 class="text-2xl font-bold mb-4">Reserva de Salas</h1>
-      <form id="reservaForm" class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+      <!-- Botão de login -->
+      <button onclick="toggleModal(true)" class="absolute top-6 right-6 bg-gray-800 text-white px-4 py-2 rounded text-sm">
+        🔐 Login como administrador
+      </button>
+
+      <!-- Formulário de reservas -->
+      <form id="reservaForm" class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end mt-4">
         <input type="text" id="nome" placeholder="Seu nome" required class="p-2 border rounded w-full" />
         <input type="date" id="data" required class="p-2 border rounded w-full" />
         <input type="time" id="inicio" required class="p-2 border rounded w-full" />
@@ -23,18 +29,20 @@
       </form>
     </div>
 
-    <!-- Aqui será preenchido dinamicamente pelo app.js com os meses e dias -->
+    <!-- Calendário gerado dinamicamente -->
     <div id="calendario"></div>
   </div>
 
   <!-- Modal de autenticação -->
-  <div id="authModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center">
-    <div class="bg-white p-4 rounded shadow space-y-2">
-      <p class="font-bold">Autenticação necessária</p>
+  <div id="authModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+    <div class="bg-white p-4 rounded shadow space-y-2 w-80">
+      <p class="font-bold text-center">Autenticação necessária</p>
       <input class="w-full p-2 border rounded" type="email" id="email" placeholder="Email" />
       <input class="w-full p-2 border rounded" type="password" id="senha" placeholder="Senha" />
-      <button id="authConfirm" class="bg-blue-500 text-white px-4 py-2 rounded">Confirmar</button>
-      <button onclick="toggleModal(false)" class="text-sm text-red-500">Cancelar</button>
+      <div class="flex justify-between mt-2">
+        <button id="authConfirm" class="bg-blue-500 text-white px-4 py-2 rounded">Confirmar</button>
+        <button onclick="toggleModal(false)" class="text-sm text-red-500">Cancelar</button>
+      </div>
     </div>
   </div>
 
