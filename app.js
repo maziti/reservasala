@@ -17,9 +17,12 @@ const db = getDatabase(app);
 let autenticado = false;
 let reservaEditando = null;
 
-// 🔐 Verifica se está logado no localStorage
 if (localStorage.getItem("admin") === "true") {
   autenticado = true;
+  document.addEventListener("DOMContentLoaded", () => {
+    const logoutBtn = document.getElementById("logoutBtn");
+    if (logoutBtn) logoutBtn.style.display = "inline-block";
+  });
 }
 
 const meses = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
@@ -142,6 +145,11 @@ document.getElementById("authConfirm").addEventListener("click", () => {
 
 window.toggleModal = (show) => {
   document.getElementById("authModal").style.display = show ? "flex" : "none";
+};
+
+window.logoutAdmin = () => {
+  localStorage.removeItem("admin");
+  location.reload();
 };
 
 document.getElementById("reservaForm").addEventListener("submit", async (e) => {
