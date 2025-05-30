@@ -1,6 +1,12 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.11/firebase-app.js";
-import { getDatabase, ref, set, get, remove } from "https://www.gstatic.com/firebasejs/9.6.11/firebase-database.js";
+import {
+  getDatabase, ref, set, get, remove
+} from "https://www.gstatic.com/firebasejs/9.6.11/firebase-database.js";
+import {
+  getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut
+} from "https://www.gstatic.com/firebasejs/9.6.11/firebase-auth.js";
 
+// Configuração do Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyCvFbiSbZehmHfE9ynoxjKhJ1Oj9I6vCIM",
   authDomain: "reserva-salas-76930.firebaseapp.com",
@@ -11,20 +17,52 @@ const firebaseConfig = {
   appId: "1:368015832793:web:1ca2ca6ee9649b96e1f0c8"
 };
 
+// Inicializar Firebase
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
+const auth = getAuth(app);
 
 let autenticado = false;
 let reservaEditando = null;
 
-if (localStorage.getItem("admin") === "true") {
-  autenticado = true;
-  document.addEventListener("DOMContentLoaded", () => {
+// Detectar login persistente
+onAuthStateChanged(auth, user => {
+  if (user) {
+    autenticado = true;
     const logoutBtn = document.getElementById("logoutBtn");
     if (logoutBtn) logoutBtn.style.display = "inline-block";
-  });
-}
+  }
+  gerarCalendario();
+  carregarReservas();
+});
 
+// Botão de login
+document.getElementById("authConfirm").addEventListener("click", () => {
+  const email = document.getElementById("email").value;
+  const senha = document.getElementById("senha").value;
+
+  signInWithEmailAndPassword(auth, email, senha)
+    .then(() => {
+      toggleModal(false);
+      location.reload();
+    })
+    .catch(() => {
+      alert("Email ou senha inválidos.");
+    });
+});
+
+// Botão de logout
+window.logoutAdmin = () => {
+  signOut(auth).then(() => {
+    location.reload();
+  });
+};
+
+window.toggleModal = (show) => {
+  document.getElementById("authModal").style.display = show ? "flex" : "none";
+};
+
+// Gerar calendário
 const meses = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
 const diasSemana = ["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"];
 
@@ -88,6 +126,7 @@ function gerarCalendario() {
   }
 }
 
+// Carregar reservas
 function carregarReservas() {
   get(ref(db, "reservas")).then(snapshot => {
     const reservas = snapshot.val() || {};
@@ -110,6 +149,7 @@ function carregarReservas() {
   });
 }
 
+// Editar reserva
 window.editar = (data, inicio, sala) => {
   const id = `${data}-${inicio}-${sala}`;
   get(ref(db, "reservas/" + id)).then(snapshot => {
@@ -124,6 +164,7 @@ window.editar = (data, inicio, sala) => {
   });
 };
 
+// Excluir reserva
 window.excluir = async (data, inicio, sala) => {
   const id = `${data}-${inicio}-${sala}`;
   await remove(ref(db, "reservas/" + id));
@@ -131,27 +172,7 @@ window.excluir = async (data, inicio, sala) => {
   location.reload();
 };
 
-document.getElementById("authConfirm").addEventListener("click", () => {
-  const email = document.getElementById("email").value;
-  const senha = document.getElementById("senha").value;
-  if (email === "ti@mazi.com.br" && senha === "@Mazi#2017@") {
-    localStorage.setItem("admin", "true");
-    toggleModal(false);
-    location.reload();
-  } else {
-    alert("Credenciais inválidas!");
-  }
-});
-
-window.toggleModal = (show) => {
-  document.getElementById("authModal").style.display = show ? "flex" : "none";
-};
-
-window.logoutAdmin = () => {
-  localStorage.removeItem("admin");
-  location.reload();
-};
-
+// Salvar reserva
 document.getElementById("reservaForm").addEventListener("submit", async (e) => {
   e.preventDefault();
   const nome = document.getElementById("nome").value;
@@ -190,6 +211,3 @@ document.getElementById("reservaForm").addEventListener("submit", async (e) => {
   alert("Reserva salva!");
   location.reload();
 });
-
-gerarCalendario();
-carregarReservas();
