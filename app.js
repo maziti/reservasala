@@ -17,7 +17,6 @@ const firebaseConfig = {
   appId: "1:368015832793:web:1ca2ca6ee9649b96e1f0c8"
 };
 
-// Inicializar Firebase
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const auth = getAuth(app);
@@ -25,18 +24,16 @@ const auth = getAuth(app);
 let autenticado = false;
 let reservaEditando = null;
 
-// Detectar login persistente
+// Detectar login
 onAuthStateChanged(auth, user => {
   if (user) {
     autenticado = true;
-    const logoutBtn = document.getElementById("logoutBtn");
-    if (logoutBtn) logoutBtn.style.display = "inline-block";
+    document.getElementById("logoutBtn").style.display = "inline-block";
   }
   gerarCalendario();
   carregarReservas();
 });
 
-// Botão de login
 document.getElementById("authConfirm").addEventListener("click", () => {
   const email = document.getElementById("email").value;
   const senha = document.getElementById("senha").value;
@@ -51,7 +48,6 @@ document.getElementById("authConfirm").addEventListener("click", () => {
     });
 });
 
-// Botão de logout
 window.logoutAdmin = () => {
   signOut(auth).then(() => {
     location.reload();
@@ -62,7 +58,6 @@ window.toggleModal = (show) => {
   document.getElementById("authModal").style.display = show ? "flex" : "none";
 };
 
-// Gerar calendário
 const meses = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
 const diasSemana = ["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"];
 
@@ -126,7 +121,6 @@ function gerarCalendario() {
   }
 }
 
-// Carregar reservas
 function carregarReservas() {
   get(ref(db, "reservas")).then(snapshot => {
     const reservas = snapshot.val() || {};
@@ -149,7 +143,6 @@ function carregarReservas() {
   });
 }
 
-// Editar reserva
 window.editar = (data, inicio, sala) => {
   const id = `${data}-${inicio}-${sala}`;
   get(ref(db, "reservas/" + id)).then(snapshot => {
@@ -164,7 +157,6 @@ window.editar = (data, inicio, sala) => {
   });
 };
 
-// Excluir reserva
 window.excluir = async (data, inicio, sala) => {
   const id = `${data}-${inicio}-${sala}`;
   await remove(ref(db, "reservas/" + id));
@@ -172,7 +164,6 @@ window.excluir = async (data, inicio, sala) => {
   location.reload();
 };
 
-// Salvar reserva
 document.getElementById("reservaForm").addEventListener("submit", async (e) => {
   e.preventDefault();
   const nome = document.getElementById("nome").value;
@@ -205,9 +196,16 @@ document.getElementById("reservaForm").addEventListener("submit", async (e) => {
     return;
   }
 
-  const id = reservaEditando || `${data}-${inicio}-${sala}`;
+  const novoId = `${data}-${inicio}-${sala}`;
   const novaReserva = { nome, data, inicio, fim, sala };
-  await set(ref(db, "reservas/" + id), novaReserva);
-  alert("Reserva salva!");
+
+  if (reservaEditando && reservaEditando !== novoId) {
+    await remove(ref(db, "reservas/" + reservaEditando));
+  }
+
+  await set(ref(db, "reservas/" + novoId), novaReserva);
+
+  alert(reservaEditando ? "Reserva atualizada!" : "Reserva salva!");
+  reservaEditando = null;
   location.reload();
 });
